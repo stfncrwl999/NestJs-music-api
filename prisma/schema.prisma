@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String
+  email        String   @unique
+  password     String
+  photo        String?
+  photoName    String?
+  role         Role     @default(USER)
+  refreshToken String?
+  confirmed    Boolean? @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Singer {
+  id           Int           @id @default(autoincrement())
+  name         String
+  info         String
+  type         SingerType
+  photo        String?
+  photoName    String?
+  singerAlbums SingerAlbum[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model SingerAlbum {
+  id        Int      @id @default(autoincrement())
+  name      String
+  photo     String?
+  photoName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Singer    Singer?  @relation(fields: [singerId], references: [id])
+  singerId  Int?
+  songs     Song[]
+}
+
+model Song {
+  id            Int                 @id @default(autoincrement())
+  name          String
+  description   String
+  artist        String
+  type          SongType
+  language      String
+  rate          Int
+  photo         String?
+  photoName     String?
+  favourites    SongsOnFavourites[]
+  playlists     SongsOnPlaylists[]
+  SingerAlbum   SingerAlbum?        @relation(fields: [singerAlbumId], references: [id])
+  singerAlbumId Int?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model Favourite {
+  id        Int                 @id @default(autoincrement())
+  name      String
+  songs     SongsOnFavourites[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model Playlist {
+  id        Int                @id @default(autoincrement())
+  name      String
+  songs     SongsOnPlaylists[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model SongsOnFavourites {
+  Song        Song      @relation(fields: [songId], references: [id])
+  songId      Int
+  Favourite   Favourite @relation(fields: [favouriteId], references: [id])
+  favouriteId Int
+
+  @@id([songId, favouriteId])
+}
+
+model SongsOnPlaylists {
+  Song       Song     @relation(fields: [songId], references: [id])
+  songId     Int
+  Playlist   Playlist @relation(fields: [playlistId], references: [id])
+  playlistId Int
+
+  @@id([songId, playlistId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum SingerType {
+  SINGLE
+  BAND
+}
+
+enum SongType {
+  CLASSICAL
+  POP
+  ROCK
+  METAL
+  COUNTRY
+  HIP_HOP
+  BALLADS
+  DANCE
+  LOVE
+  GOSPEL
+}
