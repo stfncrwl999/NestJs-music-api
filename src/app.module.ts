@@ -6,6 +6,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { UploadModule } from './upload/upload.module';
+import { SingerModule } from './singer/singer.module';
+import { SingerAlbumModule } from './singer-album/singer-album.module';
+import { SongModule } from './song/song.module';
+import { PlaylistModule } from './playlist/playlist.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +19,11 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     PrismaModule,
     UploadModule,
+    SingerModule,
+    SingerAlbumModule,
+    SongModule,
+    PlaylistModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
